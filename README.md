@@ -1,2 +1,2 @@
 # ToDo
-- [ ] Add support for show management (i.e. reset all timers when show resets)
+- [x] Add support for show management (i.e. reset all timers when show resets)

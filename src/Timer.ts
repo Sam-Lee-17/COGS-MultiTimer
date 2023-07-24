@@ -94,8 +94,7 @@ export class Timer implements TimerParams {
             this.intervalId = setInterval(() => {
                 this.setCurrentTime(this.currentTime - 1);
                 if(this.currentTime === 0) {
-                    clearInterval(this.intervalId);
-                    this.intervalId = undefined;
+                    this.setActive(false);
                     this.plugin.connection.sendEvent("Timer Finished", this.name);
                     this.reset();
                 }
