@@ -1,25 +1,73 @@
 {
-  "config": [
-    {
-      "name": "Background Color",
-      "value": {
-        "default": "#998DF7",
-        "type": "string"
-      }
-    }
-  ],
-  "description": "",
+  "name": "Multi-Timer",
+  "description": "Use multiple timers in your project!",
+  "version": "0.1.0",
+  "icon": "chess-clock",
   "events": {
     "fromCogs": [
       {
-        "name": "Game Finished",
-        "value": {
-          "type": "option",
-          "options": ["Won", "Lost"]
-        }
+        "name": "Start Timer",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Stop Timer",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Reset Timer",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Set Timer 1",
+        "value": { "type": "number", "default": 30, "min": 0 }
+      },
+      {
+        "name": "Set Timer 2",
+        "value": { "type": "number", "default": 30, "min": 0 }
+      },
+      {
+        "name": "Set Timer 3",
+        "value": { "type": "number", "default": 30, "min": 0 }
+      },
+      {
+        "name": "Set Timer 4",
+        "value": { "type": "number", "default": 30, "min": 0 }
       }
     ],
-    "toCogs": []
+    "toCogs": [
+      {
+        "name": "Timer Started",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Timer Stopped",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Timer Finished",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Timer Reset",
+        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+      },
+      {
+        "name": "Timer 1 Hits",
+        "value": { "type": "number", "min": 1 }
+      },
+      {
+        "name": "Timer 2 Hits",
+        "value": { "type": "number", "min": 1 }
+      },
+      {
+        "name": "Timer 3 Hits",
+        "value": { "type": "number", "min": 1 }
+      },
+      {
+        "name": "Timer 4 Hits",
+        "value": { "type": "number", "min": 1 }
+      }
+    ]
   },
   "media": {
     "audio": true,
@@ -27,18 +75,86 @@
     "images": true
   },
   "minCogsVersion": "4.11.0",
-  "name": "My custom Media Master",
   "state": [
     {
-      "name": "Score",
+      "name": "Timer 1 Default",
       "value": {
         "type": "number",
         "integer": true,
         "min": 0,
-        "default": 0
+        "default": 30
       },
       "writableFromCogs": true
+    },
+    {
+      "name": "Timer 2 Default",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromCogs": true
+    },
+    {
+      "name": "Timer 3 Default",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromCogs": true
+    },
+    {
+      "name": "Timer 4 Default",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromCogs": true
+    },
+    {
+      "name": "Timer 1",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromClient": true
+    },
+    {
+      "name": "Timer 2",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromClient": true
+    },
+    {
+      "name": "Timer 3",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromClient": true
+    },
+    {
+      "name": "Timer 4",
+      "value": {
+        "type": "number",
+        "integer": true,
+        "min": 0,
+        "default": 30
+      },
+      "writableFromClient": true
     }
-  ],
-  "version": "1"
+  ]
 }
