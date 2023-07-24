@@ -1,158 +1,97 @@
 {
   "name": "Multi-Timer",
   "description": "Use multiple timers in your project!",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "icon": "chess-clock",
   "events": {
     "fromCogs": [
       {
+        "name": "Create Timer",
+        "value": { "type": "string" }
+      },
+      {
+        "name": "Delete Timer",
+        "value": { "type": "string" }
+      },
+      {
         "name": "Start Timer",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
         "name": "Stop Timer",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
         "name": "Reset Timer",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
-        "name": "Set Timer 1",
+        "name": "Set Time",
         "value": { "type": "number", "default": 30, "min": 0 }
       },
       {
-        "name": "Set Timer 2",
-        "value": { "type": "number", "default": 30, "min": 0 }
-      },
-      {
-        "name": "Set Timer 3",
-        "value": { "type": "number", "default": 30, "min": 0 }
-      },
-      {
-        "name": "Set Timer 4",
+        "name": "Set Default Time",
         "value": { "type": "number", "default": 30, "min": 0 }
       }
     ],
     "toCogs": [
       {
         "name": "Timer Started",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
         "name": "Timer Stopped",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
         "name": "Timer Finished",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
+        "value": { "type": "string" }
       },
       {
         "name": "Timer Reset",
-        "value": { "type": "option", "options": [ "1", "2", "3", "4" ] }
-      },
-      {
-        "name": "Timer 1 Hits",
-        "value": { "type": "number", "min": 1 }
-      },
-      {
-        "name": "Timer 2 Hits",
-        "value": { "type": "number", "min": 1 }
-      },
-      {
-        "name": "Timer 3 Hits",
-        "value": { "type": "number", "min": 1 }
-      },
-      {
-        "name": "Timer 4 Hits",
-        "value": { "type": "number", "min": 1 }
+        "value": { "type": "string" }
       }
     ]
-  },
-  "media": {
-    "audio": true,
-    "video": true,
-    "images": true
   },
   "minCogsVersion": "4.11.0",
   "state": [
     {
-      "name": "Timer 1 Default",
+      "name": "Select Timer",
       "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
+        "type": "string",
+        "default": ""
       },
       "writableFromCogs": true
     },
     {
-      "name": "Timer 2 Default",
+      "name": "Selected Timer",
       "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
-      },
-      "writableFromCogs": true
-    },
-    {
-      "name": "Timer 3 Default",
-      "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
-      },
-      "writableFromCogs": true
-    },
-    {
-      "name": "Timer 4 Default",
-      "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
-      },
-      "writableFromCogs": true
-    },
-    {
-      "name": "Timer 1",
-      "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
+        "type": "string",
+        "default": "None"
       },
       "writableFromClient": true
     },
     {
-      "name": "Timer 2",
+      "name": "Selected Timer Time",
       "value": {
         "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
+        "default": 0
       },
       "writableFromClient": true
     },
     {
-      "name": "Timer 3",
+      "name": "Selected Timer Default Time",
       "value": {
         "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
+        "default": 0
       },
       "writableFromClient": true
     },
     {
-      "name": "Timer 4",
+      "name": "Selected Timer Active",
       "value": {
-        "type": "number",
-        "integer": true,
-        "min": 0,
-        "default": 30
+        "type": "boolean",
+        "default": false
       },
       "writableFromClient": true
     }

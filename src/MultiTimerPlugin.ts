@@ -1,100 +1,132 @@
 import { CogsConnection } from "@clockworkdog/cogs-client";
-import { TypedEventTarget } from 'typescript-event-target';
-import {Timer} from "./Timer";
-import {type} from "os";
+import { Timer } from "./Timer";
 
 export interface CogsConnectionParams {
     inputPorts: {
-        "Timer 1 Default": number;
-        "Timer 2 Default": number;
-        "Timer 3 Default": number;
-        "Timer 4 Default": number;
+        "Select Timer": string;
     }
     outputPorts: {
-        "Timer 1": number;
-        "Timer 2": number;
-        "Timer 3": number;
-        "Timer 4": number;
+        "Selected Timer": string;
+        "Selected Timer Time": number;
+        "Selected Timer Default Time": number;
+        "Selected Timer Active": boolean;
     }
     inputEvents: {
-        "Start Timer": number;
-        "Stop Timer": number;
-        "Reset Timer": number;
-        "Set Timer 1": number;
-        "Set Timer 2": number;
-        "Set Timer 3": number;
-        "Set Timer 4": number;
+        "Create Timer": string;
+        "Delete Timer": string;
+        "Start Timer": string;
+        "Stop Timer": string;
+        "Reset Timer": string;
+        "Set Time": number;
+        "Set Default Time": number;
     }
     outputEvents: {
-        "Timer Started": number;
-        "Timer Stopped": number;
-        "Timer Finished": number;
-        "Timer Reset": number;
-        "Timer 1 Hits": number;
-        "Timer 2 Hits": number;
-        "Timer 3 Hits": number;
-        "Timer 4 Hits": number;
+        "Timer Started": string;
+        "Timer Stopped": string;
+        "Timer Finished": string;
+        "Timer Reset": string;
     };
 }
 
 export class MultiTimerPlugin{
     connection: CogsConnection<CogsConnectionParams>;
-    timer1: Timer;
-    timer2: Timer;
-    timer3: Timer;
-    timer4: Timer;
+    timers: Map<string, Timer>;
+    activeTimer?: Timer;
 
     constructor() {
         this.connection = new CogsConnection<CogsConnectionParams>();
-        this.timer1 = new Timer(1, this.connection);
-        this.timer2 = new Timer(2, this.connection);
-        this.timer3 = new Timer(3, this.connection);
-        this.timer4 = new Timer(4, this.connection);
-        this.connection.addEventListener('event', (event) => {
-        //     const { key, value } = event.detail;
-        //     let timer: Timer | null = null;
-        //     if(/\d/.test(key)) {
-        //         switch (key) {
-        //             case "Set Timer 1": timer = this.timer1; break;
-        //             case "Set Timer 2": timer = this.timer2; break;
-        //             case "Set Timer 3": timer = this.timer3; break;
-        //             case "Set Timer 4": timer = this.timer4; break;
-        //         }
-        //     }
-        //     else {
-        //         switch (value.toString()) {
-        //             case "1": timer = this.timer1; break;
-        //             case "2": timer = this.timer1; break;
-        //             case "3": timer = this.timer1; break;
-        //             case "4": timer = this.timer1; break;
-        //         }
-        //     }
-        //     if(!timer)
-        //         return;
-        //     if(key === "Start Timer") {
-        //         timer.start();
-        //     }
-        //     else if(key === "Stop Timer") {
-        //         timer.stop();
-        //     }
-        //     else if(key === "Reset Timer") {
-        //         timer.reset();
-        //     }
-        //     else if(key === `Set Timer ${timer.getId()}`) {
-        //         timer.setCurrentTime(value);
-        //     }
-         });
+        this.timers = new Map<string, Timer>();
+        this.connection.addEventListener('updates', event => {
+            if(event.detail['Select Timer'] !== undefined) {
+                this.setSelectedTimer(event.detail['Select Timer']);
+            }
+        });
+        this.connection.addEventListener('event', ({detail: {key, value}}) => {
+            let timer
+            if(typeof value === 'string') {
+                if(key === 'Create Timer') {
+                    timer = this.createTimer(value);
+                    this.setSelectedTimer(value)
+                }
+                else if(key === 'Delete Timer') {
+                    this.deleteTimer(value);
+                }
+                else {
+                    timer = this.getTimer(value)
+                }
+            }
+            else if(typeof value === 'number') {
+                timer = this.activeTimer;
+            }
+            if(!timer)
+                return;
+            else if(key === 'Start Timer') {
+                timer.start();
+            }
+            else if(key === 'Stop Timer') {
+                timer.stop();
+            }
+            else if(key === 'Reset Timer') {
+                timer.reset();
+            }
+            else if(key === 'Set Time' && typeof value === 'number') {
+                timer.setCurrentTime(value);
+            }
+            else if(key === 'Set Default Time' && typeof value === 'number') {
+                timer.setDefault(value);
+            }
+        });
         this.connection.addEventListener('message', (event) => {
             if(event.detail.type === "show_reset") {
                 this.reset();
             }
         });
     }
+    
+    private createTimer(name: string) {
+        if(name in this.timers.keys()) {
+            return this.timers.get(name);
+        }
+        const timer = new Timer(name, this);
+        this.timers.set(name, timer);
+        return timer;
+    }
+
+    private deleteTimer(name: string): void {
+        let timer = this.timers.get(name);
+        if(timer?.isSelected()) {
+            this.activeTimer = Array.from(this.timers)[0][1];
+            timer?.reset();
+        }
+        this.timers.delete(name);
+    }
+
+    private setSelectedTimer(name: string): void {
+        if(this.timers.has(name)) {
+            this.activeTimer = this.timers.get(name)
+            this.connection.setOutputPortValues({
+                'Selected Timer': this.activeTimer?.getName() ?? "None",
+                'Selected Timer Time': this.activeTimer?.getCurrentTime() ?? 0,
+                'Selected Timer Default Time': this.activeTimer?.getDefaultTime() ?? 0,
+                'Selected Timer Active': this.activeTimer?.isActive() ?? false
+            });
+        }
+    }
+
+    isSelectedTimer(timer: Timer): boolean {
+        return this.activeTimer === timer;
+    }
+
+    getTimer(timer?: string): Timer | undefined {
+        if(timer) {
+            let retTimer = this.timers.get(timer)
+            if(retTimer)
+                return retTimer;
+        }
+        return this.activeTimer;
+    }
 
     private reset(): void {
-        this.timer1.reset();
-        this.timer2.reset();
-        this.timer3.reset();
-        this.timer4.reset();
+        this.timers.forEach((timer, _) => timer.reset());
     }
 }
